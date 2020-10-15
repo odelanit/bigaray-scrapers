@@ -4,10 +4,10 @@ from scraping.spiders.items import ProductItem
 
 
 class ProductSpider(scrapy.Spider):
-    name = 'Urban-outfitters_1_1'  # name_gender_type
+    name = 'Urban-outfitters_1_2'  # name_gender_type
     allowed_domains = ['www.urbanoutfitters.com']
     start_urls = [
-        'https://www.urbanoutfitters.com/womens-new-arrivals?page=%s' % page for page in range(1, 11)
+        'https://www.urbanoutfitters.com/womens-clothing-sale?page=%s' % page for page in range(1, 17)
     ]
     custom_settings = {
         "DOWNLOAD_DELAY": 20
@@ -32,7 +32,12 @@ class ProductSpider(scrapy.Spider):
             item['title'] = title.strip()
         else:
             pass
-        price = response.css('span.c-pwa-product-price__current::text').get()
+        sale_price = response.css('span.c-pwa-product-price__current::text').get()
+        if sale_price:
+            item['sale_price'] = sale_price
+        else:
+            pass
+        price = response.css('span.c-pwa-product-price__original::text').get()
         if price:
             item['price'] = price
         else:

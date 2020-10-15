@@ -2,7 +2,7 @@ import json
 
 import scrapy
 
-from scraping.items import ProductItem
+from scraping.spiders.items import ProductItem
 
 
 class ProductSpider(scrapy.Spider):
