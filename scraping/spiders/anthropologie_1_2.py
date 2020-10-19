@@ -10,11 +10,11 @@ from scraping.spiders.items import ProductItem
 
 
 class ProductSpider(scrapy.Spider):
-    name = 'Anthropologie_1_1'  # name_gender_type
+    name = 'Anthropologie_1_2'  # name_gender_type
     allowed_domains = ['www.anthropologie.com']
     base_url = 'https://www.anthropologie.com/shop'
     base_image_url = 'https://s7d5.scene7.com/is/image/Anthropologie'
-    start_urls = ['https://www.anthropologie.com/clothing-new-this-week?page=%s' % page for page in range(1, 4)]
+    start_urls = ['https://www.anthropologie.com/freshly-cut-sale?page=%s' % page for page in range(1, 4)]
 
     def parse(self, response, **kwargs):
         url = response.request.url
@@ -28,7 +28,7 @@ class ProductSpider(scrapy.Spider):
             initial_state_tag = assign.css('identifier[name="initialState"]')
             if initial_state_tag:
                 initial_state = json.loads(assign.css('string::text').get())
-                category = initial_state.get('catchall--clothing-new-this-week').get('category')
+                category = initial_state.get('catchall--freshly-cut-sale').get('category')
                 tiles = category.get('tileGrid').get('pages').get(page).get('wrapper').get('tiles')
                 for product_tile in tiles:
                     product = product_tile.get('product')
@@ -43,7 +43,8 @@ class ProductSpider(scrapy.Spider):
                         self.base_image_url, image_slug, "$a15-pdp-detail-shot$&hei=900&qlt=80&fit=constrain"
                     )
                     item['title'] = product.get('displayName')
-                    item['price'] = "${0}".format(sku_info.get('salePriceLow'))
+                    item['price'] = "${0}".format(sku_info.get('listPriceLow'))
+                    item['sale_price'] = "${0}".format(sku_info.get('salePriceLow'))
                     item['image_urls'] = [image_url, hq_image_url]
                     item['product_link'] = "{0}/{1}".format(self.base_url, product_slug)
                     yield item

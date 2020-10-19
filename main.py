@@ -10,7 +10,7 @@ if __name__ == '__main__':
     settings = get_project_settings()
     process = CrawlerProcess(settings)
 
-    ProductSpider = locate('scraping.spiders.tedbaker_2_1.ProductSpider')
+    ProductSpider = locate('scraping.spiders.bandier_1_2.ProductSpider')
 
     process.crawl(ProductSpider)
     process.start()
