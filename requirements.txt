@@ -2,3 +2,7 @@ scrapy==2.3.0
 pillow==7.2.0
 js2xml==0.4.0
 selenium==3.141.0
+cfscrape==2.1.1
+scrapy_cloudflare_middleware==0.0.1
+scrapy-selenium==0.0.7
+xmltodict==0.12.0

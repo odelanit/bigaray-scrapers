@@ -2,11 +2,14 @@
 #
 # See documentation in:
 # https://docs.scrapy.org/en/latest/topics/spider-middleware.html
+import logging
 
 from scrapy import signals
 
 # useful for handling different item types with a single interface
 from itemadapter import is_item, ItemAdapter
+
+from scraping.cfscrape import get_tokens
 
 
 class ScrapingSpiderMiddleware:
@@ -101,3 +104,44 @@ class ScrapingDownloaderMiddleware:
 
     def spider_opened(self, spider):
         spider.logger.info('Spider opened: %s' % spider.name)
+
+
+class CloudFlareMiddleware:
+    """Scrapy middleware to bypass the CloudFlare's anti-bot protection"""
+
+    @staticmethod
+    def is_cloudflare_challenge(response):
+        """Test if the given response contains the cloudflare's anti-bot protection"""
+
+        return (
+                response.status == 403
+                and response.headers.get('Server', '').startswith(b'cloudflare')
+        )
+
+    def process_response(self, request, response, spider):
+        """Handle the a Scrapy response"""
+
+        if not self.is_cloudflare_challenge(response):
+            return response
+
+        logger = logging.getLogger('cloudflaremiddleware')
+
+        logger.debug(
+            'Cloudflare protection detected on %s, trying to bypass...',
+            response.url
+        )
+
+        cloudflare_tokens, __ = get_tokens(
+            request.url,
+            user_agent=spider.settings.get('USER_AGENT')
+        )
+
+        logger.debug(
+            'Successfully bypassed the protection for %s, re-scheduling the request',
+            response.url
+        )
+
+        request.cookies.update(cloudflare_tokens)
+        request.priority = 99999
+
+        return request

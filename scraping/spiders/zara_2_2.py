@@ -10,10 +10,10 @@ from scraping.spiders.items import ProductItem
 
 
 class ProductSpider(scrapy.Spider):
-    name = 'Zara_1_1'  # name_gender_type
+    name = 'Zara_2_2'  # name_gender_type
     allowed_domains = ['www.zara.com']
     start_urls = [
-        'https://www.zara.com/ca/en/woman-new-in-l1180.html?v1=1549286',
+        'https://www.zara.com/ca/en/man-special-prices-l806.html?v1=1635729',
     ]
 
     def scroll(self, browser, timeout):
@@ -54,7 +54,8 @@ class ProductSpider(scrapy.Spider):
                 item['title'] = name.strip()
             else:
                 continue
-            item['price'] = product.css('span.main-price::attr(data-price)').get()
+            item['sale_price'] = product.css('span.sale::attr(data-price)').get()
+            item['price'] = product.css('span.line-through::attr(data-price)').get()
             image_url = product.css('img.product-media::attr(src)').get()
             if image_url and '/w/' in image_url:
                 b = image_url.split('/w/')

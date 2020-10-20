@@ -10,10 +10,10 @@ from scraping.spiders.items import ProductItem
 
 
 class ProductSpider(scrapy.Spider):
-    name = 'Zara_1_1'  # name_gender_type
+    name = 'Zara_2_1'  # name_gender_type
     allowed_domains = ['www.zara.com']
     start_urls = [
-        'https://www.zara.com/ca/en/woman-new-in-l1180.html?v1=1549286',
+        'https://www.zara.com/ca/en/man-new-in-l711.html?v1=1546758',
     ]
 
     def scroll(self, browser, timeout):

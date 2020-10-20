@@ -10,11 +10,11 @@ from scraping.spiders.items import ProductItem
 
 
 class ProductSpider(scrapy.Spider):
-    name = 'Banana-republic_1_1'  # name_gender_type
+    name = 'Banana-republic_1_2'  # name_gender_type
     allowed_domains = ['bananarepublic.gapcanada.ca']
     start_urls = [
-        'https://bananarepublic.gapcanada.ca/browse/category.do?cid=48422',
-        'https://bananarepublic.gapcanada.ca/browse/category.do?cid=48422#pageId=1&department=136'
+        'https://bananarepublic.gapcanada.ca/browse/category.do?cid=26495',
+        'https://bananarepublic.gapcanada.ca/browse/category.do?cid=26495#pageId=1'
     ]
 
     def scroll(self, browser, timeout):
@@ -50,15 +50,17 @@ class ProductSpider(scrapy.Spider):
         products = scrapy_selector.css('.product-card')
         for product in products:
             title = product.css('.product-card__name::text').get()
-            price = product.css('span.product-price__no-strike::text').get()
+            price = product.css('span.product-price__strike::text').get()
+            sale_price = product.css('span.product-price__highlight::text').get()
             image_url = product.css('img::attr(src)').get()
             product_link = product.css('.product-card__link::attr(href)').get()
 
-            if title and price and image_url and product_link:
+            if title and price and sale_price and image_url and product_link:
                 item = ProductItem()
                 item['title'] = title
                 item['price'] = price
+                item['sale_price'] = sale_price
                 item['image_urls'] = [image_url, image_url]
                 item['product_link'] = product_link
                 yield item
-        browser.close()
+        browser.quit()

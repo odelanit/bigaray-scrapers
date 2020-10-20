@@ -10,11 +10,12 @@ from scraping.spiders.items import ProductItem
 
 
 class ProductSpider(scrapy.Spider):
-    name = 'Banana-republic_1_1'  # name_gender_type
+    name = 'Banana-republic_2_1'  # name_gender_type
     allowed_domains = ['bananarepublic.gapcanada.ca']
     start_urls = [
-        'https://bananarepublic.gapcanada.ca/browse/category.do?cid=48422',
-        'https://bananarepublic.gapcanada.ca/browse/category.do?cid=48422#pageId=1&department=136'
+        'https://bananarepublic.gapcanada.ca/browse/category.do?cid=13846',
+        'https://bananarepublic.gapcanada.ca/browse/category.do?cid=13846#pageId=1',
+        'https://bananarepublic.gapcanada.ca/browse/category.do?cid=13846#pageId=2'
     ]
 
     def scroll(self, browser, timeout):

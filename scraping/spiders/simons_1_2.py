@@ -7,10 +7,10 @@ from scraping.spiders.items import ProductItem
 
 
 class ProductSpider(scrapy.Spider):
-    name = 'Simons_1_1'  # name_gender_type
+    name = 'Simons_1_2'  # name_gender_type
     allowed_domains = ['www.simons.ca']
     start_urls = [
-        'https://www.simons.ca/fr/vetements-femme/nouveautes--new-6660?page=%s' % page for page in range(1, 18)
+        'https://www.simons.ca/fr/vetements-femme/soldes--sale-6660?page=%s' % page for page in range(1, 4)
     ]
     base_url = 'https://www.simons.ca'
     custom_settings = {
@@ -31,8 +31,10 @@ class ProductSpider(scrapy.Spider):
         for idx, product in enumerate(products):
             item = ProductItem()
             item['title'] = product.css('span[itemprop="name"]::text').get()
-            price = product.css('span.price::text').get().strip()
-            item['price'] = price
+            price = product.css('span.listPrice::text').get()
+            item['price'] = price.strip()
+            price = product.css('span.salePrice::text').get()
+            item['sale_price'] = price.strip()
             image_url = product.css('img::attr(src)').get()
             item['image_urls'] = [image_url, image_url]
             item['product_link'] = product.css('a.desc::attr(href)').get()

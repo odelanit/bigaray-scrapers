@@ -10,16 +10,16 @@ from scraping.spiders.items import ProductItem
 
 
 class ProductSpider(scrapy.Spider):
-    name = 'Zara_1_1'  # name_gender_type
-    allowed_domains = ['www.zara.com']
+    name = 'Outdoor-voices_1_1'  # name_gender_type
+    allowed_domains = ['www.outdoorvoices.com']
     start_urls = [
-        'https://www.zara.com/ca/en/woman-new-in-l1180.html?v1=1549286',
+        'https://www.outdoorvoices.com/collections/new-arrivals?genderFilter=Women'
     ]
 
     def scroll(self, browser, timeout):
         scroll_pause_time = timeout
         position = 0
-        step = 1000
+        step = 300
 
         time.sleep(scroll_pause_time)
 
@@ -40,33 +40,29 @@ class ProductSpider(scrapy.Spider):
         browser.implicitly_wait(30)
         browser.get(response.url)
         try:
-            browser.find_element_by_css_selector('.modal__close-button').click()
+            browser.find_element_by_css_selector('.bx-close').click()
         except NoSuchElementException:
             print('No close button')
-        self.scroll(browser, 1.5)
+        self.scroll(browser, 1)
+
+        # with open('outdoor.html', 'w', encoding='utf8') as html_file:
+        #     html_file.write(browser.page_source)
 
         scrapy_selector = Selector(text=browser.page_source)
-        products = scrapy_selector.css('.product')
+        products = scrapy_selector.css('.Collection_item__9VFnN')
         for product in products:
-            item = ProductItem()
-            name = product.css('span.product-name::text').get()
-            if name:
-                item['title'] = name.strip()
-            else:
-                continue
-            item['price'] = product.css('span.main-price::attr(data-price)').get()
-            image_url = product.css('img.product-media::attr(src)').get()
-            if image_url and '/w/' in image_url:
-                b = image_url.split('/w/')
-                c = b[1].split('/')
-                d = "{0}/w/900/{1}".format(b[0], c[1])
+            title = product.css('.ProductListItem_title__1VTnR > a > span:first-child::text').get()
+            price = product.css('.ProductListItem_title__1VTnR > a > span:nth-child(2)::text').get()
+            image_urls = product.css('img::attr(srcset)').get()
+            image_url = image_urls.split(', ')[0]
+            product_link = product.css('.ProductListItem_title__1VTnR > a::attr(href)').get()
 
-                item['image_urls'] = [image_url, d]
-            else:
-                continue
-
-            product_link = product.css('a.name::attr(href)').get()
-            item['product_link'] = product_link
-            yield item
-
+            if title and price and image_url and product_link:
+                item = ProductItem()
+                item['title'] = title
+                item['price'] = price
+                item['image_urls'] = [image_url, image_url]
+                item['product_link'] = product_link
+                yield item
         browser.quit()
+
