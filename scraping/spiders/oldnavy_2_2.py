@@ -1,17 +1,21 @@
+import time
 from shutil import which
 
 import scrapy
+from scrapy.selector import Selector
+from selenium import webdriver
+from selenium.common.exceptions import NoSuchElementException
+from selenium.webdriver.firefox.options import Options
 
 from scraping.spiders.items import ProductItem
 
 
 class ProductSpider(scrapy.Spider):
-    name = 'Banana-republic_2_2'  # name_gender_type
-    allowed_domains = ['bananarepublic.gapcanada.ca']
+    name = 'Old-navy_2_2'  # name_gender_type
+    allowed_domains = ['oldnavy.gapcanada.ca']
     start_urls = [
-        'https://bananarepublic.gapcanada.ca/browse/category.do?cid=26219'
+        'https://oldnavy.gapcanada.ca/browse/category.do?cid=26061'
     ]
-
     custom_settings = {
         'SELENIUM_DRIVER_NAME': 'firefox',
         'SELENIUM_DRIVER_EXECUTABLE_PATH': which('geckodriver'),

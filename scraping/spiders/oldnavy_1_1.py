@@ -6,12 +6,12 @@ from scraping.spiders.items import ProductItem
 
 
 class ProductSpider(scrapy.Spider):
-    name = 'Banana-republic_2_2'  # name_gender_type
-    allowed_domains = ['bananarepublic.gapcanada.ca']
+    name = 'Old-navy_1_1'  # name_gender_type
+    allowed_domains = ['oldnavy.gapcanada.ca']
     start_urls = [
-        'https://bananarepublic.gapcanada.ca/browse/category.do?cid=26219'
+        'https://oldnavy.gapcanada.ca/browse/category.do?cid=10018',
+        'https://oldnavy.gapcanada.ca/browse/category.do?cid=10018#pageId=1'
     ]
-
     custom_settings = {
         'SELENIUM_DRIVER_NAME': 'firefox',
         'SELENIUM_DRIVER_EXECUTABLE_PATH': which('geckodriver'),
@@ -31,16 +31,14 @@ class ProductSpider(scrapy.Spider):
         products = response.css('.product-card')
         for product in products:
             title = product.css('.product-card__name::text').get()
-            price = product.css('span.product-price__strike::text').get()
-            sale_price = product.css('span.product-price__highlight::text').get()
+            price = product.css('span.product-price__no-strike::text').get()
             image_url = product.css('img::attr(src)').get()
             product_link = product.css('.product-card__link::attr(href)').get()
 
-            if title and price and sale_price and image_url and product_link:
+            if title and price and image_url and product_link:
                 item = ProductItem()
                 item['title'] = title
                 item['price'] = price
-                item['sale_price'] = sale_price
                 item['image_urls'] = [image_url, image_url]
                 item['product_link'] = product_link
                 yield item

@@ -6,3 +6,4 @@ cfscrape==2.1.1
 scrapy_cloudflare_middleware==0.0.1
 scrapy-selenium==0.0.7
 xmltodict==0.12.0
+pylru==1.2.0

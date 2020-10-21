@@ -1,17 +1,23 @@
+import time
 from shutil import which
 
 import scrapy
+from scrapy.selector import Selector
+from selenium import webdriver
+from selenium.common.exceptions import NoSuchElementException
+from selenium.webdriver.firefox.options import Options
 
 from scraping.spiders.items import ProductItem
 
 
 class ProductSpider(scrapy.Spider):
-    name = 'Banana-republic_2_2'  # name_gender_type
-    allowed_domains = ['bananarepublic.gapcanada.ca']
+    name = 'Old-navy_1_2'  # name_gender_type
+    allowed_domains = ['oldnavy.gapcanada.ca']
     start_urls = [
-        'https://bananarepublic.gapcanada.ca/browse/category.do?cid=26219'
+        'https://oldnavy.gapcanada.ca/browse/category.do?cid=26190',
+        'https://oldnavy.gapcanada.ca/browse/category.do?cid=26190#pageId=1',
+        'https://oldnavy.gapcanada.ca/browse/category.do?cid=26190#pageId=2',
     ]
-
     custom_settings = {
         'SELENIUM_DRIVER_NAME': 'firefox',
         'SELENIUM_DRIVER_EXECUTABLE_PATH': which('geckodriver'),
@@ -44,3 +50,4 @@ class ProductSpider(scrapy.Spider):
                 item['image_urls'] = [image_url, image_url]
                 item['product_link'] = product_link
                 yield item
+
