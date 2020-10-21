@@ -1,11 +1,6 @@
-import time
 from shutil import which
 
 import scrapy
-from scrapy.selector import Selector
-from selenium import webdriver
-from selenium.common.exceptions import NoSuchElementException
-from selenium.webdriver.firefox.options import Options
 
 from scraping.spiders.items import ProductItem
 
